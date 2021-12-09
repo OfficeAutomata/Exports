@@ -16,7 +16,7 @@
     <Compile Include="Shared.fs" />
     <Compile Include="Query.fs" />
     <Compile Include="Excel.fs" />
-    <Compile Include="Recommendations.fs" />
+    <Compile Include="RobotFramework.fs" />
   </ItemGroup>
 
   <ItemGroup>

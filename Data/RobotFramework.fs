@@ -5,6 +5,7 @@ module RobotFramework =
     open Datas
     open Utils
     open System.Text.RegularExpressions
+    open Datas.Types.Tasks
 
     let HasCreditCardNumber (input: string) =
         let regex = @"\b4[0-9]{12}(?:[0-9]{3})?\b|\b5[1-5][0-9]{14}\b|\b3[47][0-9]{13}\b|\b3(?:0[0-5]|[68][0-9])[0-9]{11}\b|\b6(?:011|5[0-9]{2})[0-9]{12}\b|\b(?:2131|1800|35\d{3})\d{11}\b"
@@ -31,28 +32,28 @@ module RobotFramework =
         if (matches.Count > 0) then true
         else false
     
-    let (|Int|_|) str =
+    let (|Int|_|) (str: string) =
        match System.Int32.TryParse(str) with
        | (true,int) -> Some(int)
        | _ -> None
     
     // create an active pattern
-    let (|Bool|_|) str =
+    let (|Bool|_|) (str: string) =
        match System.Boolean.TryParse(str) with
        | (true,bool) -> Some(bool)
        | _ -> None
     
-    let (|DateTime|_|) str =
+    let (|DateTime|_|) (str: string) =
        match System.DateTime.TryParse(str) with
        | (true,date) -> Some(date)
        | _ -> None
     
-    let (|Double|_|) str =
+    let (|Double|_|) (str: string) =
        match System.Double.TryParse(str) with
        | (true,double) -> Some(double)
        | _ -> None
     
-    let (|Decimal|_|) str =
+    let (|Decimal|_|) (str: string) =
        match System.Decimal.TryParse(str) with
        | (true,decimal) -> Some(decimal)
        | _ -> None
@@ -208,7 +209,7 @@ module RobotFramework =
     
     
     let createEventDescription (input0 : Process_IndexedEvent*Process_IndexedEvent) =
-        let config = AppDataConfig()
+        //let config = AppDataConfig()
         let prev, input = input0
         let cell2 = 
             if input.eventCell_2.Contains("$") then
@@ -223,7 +224,8 @@ module RobotFramework =
             //let t1 = pie.eventCell_1.Split(' ') 
             //if t1.Length > 3 then t1 |> fun x -> x.
         //let appfile = appfilechk pie
-        let value = try config.Decrypt input.eventValue_1 with _ -> input.eventValue_1
+        //let value = try config.Decrypt input.eventValue_1 with _ -> input.eventValue_1
+        let value = input.eventValue_1
         let input = {input with eventCell_1 = cell1; eventCell_2 = cell2; eventValue_1 = value}
         match input.eventType_1 with
         | x when input.eventContext_4 = "Logic" -> input.eventContext_1
@@ -369,18 +371,16 @@ module RobotFramework =
                                        ) 
         |> Array.concat
         
-    let composeRobot (tid:int) =
-        let task = SQL_Task.Sql_TaskSelect_TaskID tid |> Sql_func |> Array.head
-        let pie = Sql_PIE_Select_Task tid |> Sql_func
-        let head = robotHeader task.Task_Name        
-        if pie.IsSome then 
-            let ary = pie.Value |> Array.map (fun x -> x.eventContext_2.Trim()) |> Array.distinct
-            let foot = robotFooter ary
-            composeRobotEvents pie.Value
-            |> Array.append head
-            |> fun x -> Array.append x foot
-            |> String.concat "\n"
-        else ""
+    let composeRobot (tid:int) (task: Task) (pie: Process_IndexedEvent[]) =
+        //let task = SQL_Task.Sql_TaskSelect_TaskID tid |> Sql_func |> Array.head
+        //let pie = Sql_PIE_Select_Task tid |> Sql_func
+        let head = robotHeader task.name       
+        let ary = pie |> Array.map (fun x -> x.eventContext_2.Trim()) |> Array.distinct
+        let foot = robotFooter ary
+        composeRobotEvents pie
+        |> Array.append head
+        |> fun x -> Array.append x foot
+        |> String.concat "\n"
 
 
     //let saveRobot name (text: string[]) =
