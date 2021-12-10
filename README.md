@@ -16,6 +16,7 @@ This library allows for the creation of different RPA exports.
 Data from tracking does not use XML as it's put into a common format for the AI. Hence, field value change based on the framework being tracked.
 
 Event Format: 
+```
     {
       "WorkflowID": 0,
       "Index": 647,
@@ -34,4 +35,5 @@ Event Format:
       "Application": "Calculator",
       "Data": "",
       "API": "UIAutomation"
-    },
+    }
+```
