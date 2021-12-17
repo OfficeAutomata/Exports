@@ -10,6 +10,7 @@ This library allows for the creation of different RPA exports.
 - Java
 - PDF (X/Y Coord, Sections)
 - Greenscreen (AS400, X/Y Coord, Line Coord)
+- Logic (If/Then/Else statements)
 
 ## Format
 
